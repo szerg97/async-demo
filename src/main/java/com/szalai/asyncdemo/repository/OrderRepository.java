@@ -1,7 +1,7 @@
-package com.szalai.asyncdemo;
+package com.szalai.asyncdemo.repository;
 
 import com.szalai.asyncdemo.model.Order;
-import com.szalai.asyncdemo.model.dto.OrderRequest;
+import com.szalai.asyncdemo.model.dto.AddOrderRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ public class OrderRepository {
 
     private final List<Order> orders = new ArrayList<>();
 
-    public Order save(OrderRequest order) {
-        Order orderToSave = new Order(UUID.randomUUID().toString(), order.getName(), order.getPrice());
+    public Order save(AddOrderRequest order) {
+        final Order orderToSave = new Order(UUID.randomUUID().toString(), order.getName(), order.getPrice());
         orders.add(orderToSave);
         return orderToSave;
     }

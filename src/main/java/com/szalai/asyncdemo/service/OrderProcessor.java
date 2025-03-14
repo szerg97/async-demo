@@ -1,7 +1,7 @@
 package com.szalai.asyncdemo.service;
 
-import com.szalai.asyncdemo.model.dto.OrderRequest;
-import com.szalai.asyncdemo.model.dto.OrderResponse;
+import com.szalai.asyncdemo.model.dto.AddOrderRequest;
+import com.szalai.asyncdemo.model.dto.AddOrderResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,8 +13,8 @@ public class OrderProcessor {
 
     private final OrderService orderService;
 
-    public OrderResponse process(OrderRequest request) {
-        final OrderResponse response = orderService.addOrder(request);
+    public AddOrderResponse process(AddOrderRequest request) {
+        final AddOrderResponse response = orderService.addOrder(request);
         try {
             orderService.notifyCustomer(response.getOrderId());
             orderService.dispatchOrder(response.getOrderId());
