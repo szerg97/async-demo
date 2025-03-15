@@ -11,7 +11,15 @@ import java.util.UUID;
 @Repository
 public class OrderRepository {
 
-    private final List<Order> orders = new ArrayList<>();
+    private static final List<Order> orders = new ArrayList<>();
+
+    static {
+        orders.addAll(List.of(
+                new Order(UUID.randomUUID().toString(), "Order-1", 23.0),
+                new Order(UUID.randomUUID().toString(), "Order-2", 54.5),
+                new Order(UUID.randomUUID().toString(), "Order-3", 32.2)
+        ));
+    }
 
     public Order save(AddOrderRequest order) {
         final Order orderToSave = new Order(UUID.randomUUID().toString(), order.getName(), order.getPrice());

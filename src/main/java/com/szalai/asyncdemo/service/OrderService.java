@@ -19,29 +19,41 @@ public class OrderService {
 
     private final OrderRepository repository;
 
-    public AddOrderResponse addOrder(AddOrderRequest request) {
-        Order orderSaved = repository.save(request);
+    public AddOrderResponse addOrder(final AddOrderRequest request) {
+        final Order orderSaved = repository.save(request);
         log.info("Order saved: {}, thread: {}", orderSaved.getOrderId(), Thread.currentThread().getName());
         return new AddOrderResponse(orderSaved.getOrderId(), orderSaved.getName(), orderSaved.getPrice());
     }
 
     @Async("asyncTaskExecutor")
-    public void notifyCustomer(String orderId) throws InterruptedException {
+    public void notifyCustomer(final String orderId) throws InterruptedException {
         log.info("Notifying customer about order: {}, thread: {}", orderId, Thread.currentThread().getName());
         Thread.sleep(2000);
         log.info("Notified customer about order: {}, thread: {}", orderId, Thread.currentThread().getName());
     }
 
     @Async("asyncTaskExecutor")
-    public void dispatchOrder(String orderId) throws InterruptedException {
+    public void dispatchOrder(final String orderId) throws InterruptedException {
         log.info("Dispatching order: {}, thread: {}", orderId, Thread.currentThread().getName());
         Thread.sleep(3000);
-        repository.findAll().stream().filter(order -> order.getOrderId().equals(orderId)).findFirst().ifPresent(order -> order.setDispatched(true));
+        repository.findAll().stream()
+                .filter(order -> order.getOrderId().equals(orderId))
+                .findFirst()
+                .ifPresent(order -> order.setDispatched(true));
         log.info("Dispatched order: {}, thread: {}", orderId, Thread.currentThread().getName());
     }
 
-    public List<GetOrderResponse> getOrders() {
-        return repository.findAll().stream().map(order -> new GetOrderResponse(
+    public List<GetOrderResponse> getOrders(final Boolean dispatched) {
+        final List<Order> orders = repository.findAll();
+        List<Order> ordersFiltered;
+        if (dispatched != null && dispatched) {
+            ordersFiltered = orders.stream().filter(order -> order.getDispatched().equals(true)).toList();
+        } else if (dispatched != null) {
+            ordersFiltered = orders.stream().filter(order -> order.getDispatched().equals(false)).toList();
+        } else {
+            ordersFiltered = orders;
+        }
+        return ordersFiltered.stream().map(order -> new GetOrderResponse(
                 order.getOrderId(),
                 order.getName(),
                 order.getPrice(),
